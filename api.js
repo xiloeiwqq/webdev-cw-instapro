@@ -47,7 +47,6 @@ export function createPost({ token, description, imageUrl }) {
     method: "POST",
     headers: {
       Authorization: token,
-      "Content-Type": "application/json",
     },
     body: JSON.stringify({ description, imageUrl }),
   }).then((response) => {
@@ -56,7 +55,9 @@ export function createPost({ token, description, imageUrl }) {
     }
 
     if (response.status === 400) {
-      throw new Error("Ошибка добавления поста");
+      return response.json().then((data) => {
+        throw new Error(data.error || "Ошибка добавления поста");
+      });
     }
 
     return response.json();
